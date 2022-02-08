@@ -1,22 +1,23 @@
 import random
 
-bill_value, guests, nb_people = 0, dict(), 0
+bill_value, bill, people, nb_people = 0, dict(), set(), 0
 
 
 def print_divided_bill():
     print()
-    print(guests)
+    print(bill)
 
 
 def split_bill():
-    global guests
+    global bill
 
     people_part = round(bill_value / nb_people, 2)
-    for guest in guests:
-        guests[guest] = people_part
+    for guest in people:
+        bill[guest] = people_part
 
 
 def is_someone_lucky():
+    global bill, people, nb_people
     print()
     while True:
         print('Do you want to use the "Who is lucky?" feature? Write Yes/No:')
@@ -25,14 +26,20 @@ def is_someone_lucky():
             break
     print()
     if answer == "Yes":
-        lucky_one = random.choice([key for key in guests.keys()])
+        lucky_one = random.choice([key for key in bill.keys()])
+
         print(lucky_one, "is the lucky one!")
+        bill[lucky_one] = 0
+        nb_people -= 1
+        people.remove(lucky_one)
+        split_bill()
+
     elif answer == "No":
         print("No one is going to be lucky")
 
 
 def define_dinner_party():
-    global bill_value, guests, nb_people
+    global bill_value, bill, nb_people, people
     print("Enter the number of friends joining (including you):")
     nb_people = int(input())
     print()
@@ -46,7 +53,8 @@ def define_dinner_party():
         print("Enter the name of every friend (including you), each on a new line:")
         for _ in range(nb_people):
             person = input()
-            guests.setdefault(person, 0)
+            people.add(person)
+            bill.setdefault(person, 0)
             if len(person) == 0:
                 break
         print()
@@ -57,5 +65,5 @@ def define_dinner_party():
 define_dinner_party()
 if nb_people > 0:
     split_bill()
-    #    print_divided_bill()
     is_someone_lucky()
+    print_divided_bill()
